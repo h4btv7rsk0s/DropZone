@@ -136,11 +136,29 @@ const CreateAirdrop = () => {
         toast.info(`[${i + 1}/${validRecipients.length}] Encrypting allocation for ${recipient.address.slice(0, 6)}...`);
 
         const amount = BigInt(recipient.amount);
-        const { encryptedAmount, proof } = await encryptAmount(
-          amount,
-          CONTRACTS.AirdropFactory,
-          address
-        );
+
+        // 确保 FHE 加密成功
+        let encryptedAmount: `0x${string}`;
+        let proof: `0x${string}`;
+
+        try {
+          const encrypted = await encryptAmount(
+            amount,
+            CONTRACTS.AirdropFactory,
+            address
+          );
+          encryptedAmount = encrypted.encryptedAmount;
+          proof = encrypted.proof;
+
+          console.log('[CreateAirdrop] Encrypted:', {
+            original: amount.toString(),
+            encrypted: encryptedAmount,
+            proofLength: proof.length
+          });
+        } catch (error: any) {
+          toast.error(`FHE encryption failed: ${error.message}`);
+          throw error; // 停止执行
+        }
 
         toast.info(`[${i + 1}/${validRecipients.length}] Submitting allocation...`);
 
