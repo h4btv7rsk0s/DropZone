@@ -1,8 +1,8 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
-import OwnerPanel from '@/components/OwnerPanel';
-import AirdropDashboard from '@/components/AirdropDashboard';
+import CreateAirdrop from '@/components/CreateAirdrop';
+import AirdropList from '@/components/AirdropList';
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -12,8 +12,8 @@ const Index = () => {
       <main>
         <Hero />
         <Features />
-        <OwnerPanel />
-        <AirdropDashboard />
+        <CreateAirdrop />
+        <AirdropList />
       </main>
       <Footer />
     </div>
