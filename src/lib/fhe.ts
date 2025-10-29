@@ -15,7 +15,7 @@ declare global {
 let fheInstance: any = null;
 let sdkPromise: Promise<any> | null = null;
 
-const SDK_URL = 'https://cdn.zama.ai/relayer-sdk-js/0.2.0/relayer-sdk-js.js';
+const SDK_URL = 'https://cdn.zama.ai/relayer-sdk-js/0.2.0/relayer-sdk-js.umd.cjs';
 
 /**
  * Dynamically load Zama FHE SDK from CDN
