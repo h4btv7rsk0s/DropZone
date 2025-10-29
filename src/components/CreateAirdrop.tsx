@@ -248,7 +248,7 @@ const CreateAirdrop = () => {
                     <div>
                       <h3 className="font-semibold">Recipients ({validCount} valid)</h3>
                       <p className="text-sm text-muted-foreground">
-                        Add addresses (明文) and encrypted amounts (加密)
+                        Add addresses (public) and encrypted amounts (FHE)
                       </p>
                     </div>
                     <Button
@@ -302,8 +302,8 @@ const CreateAirdrop = () => {
                     Privacy Features
                   </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>✅ Addresses are stored publicly (明文)</li>
-                    <li>✅ Amounts are encrypted with FHE before storing (加密)</li>
+                    <li>✅ Addresses are stored publicly</li>
+                    <li>✅ Amounts are encrypted with FHE before storing</li>
                     <li>✅ Only recipients can decrypt and view their amounts</li>
                     <li>✅ All allocations set in single transaction batch</li>
                   </ul>

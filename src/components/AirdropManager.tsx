@@ -251,7 +251,7 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">
-                      Recipient Address (明文)
+                      Recipient Address (Public)
                     </label>
                     <Input
                       type="text"
