@@ -32,7 +32,6 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
     abi: ABIS.AirdropFactory,
     functionName: 'getMyAllocation',
     args: [BigInt(airdropId)],
-    account: address,
   });
 
   const { data: claimedHandle, refetch: refetchClaimed } = useReadContract({
@@ -40,7 +39,6 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
     abi: ABIS.AirdropFactory,
     functionName: 'getMyClaimed',
     args: [BigInt(airdropId)],
-    account: address,
   });
 
   // Initialize FHE on mount
