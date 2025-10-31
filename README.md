@@ -165,7 +165,7 @@ Confidential treasury distributions while maintaining auditability.
 
 ## 🗺️ Roadmap
 
-### Phase 1: Foundation ✅ (Completed - Q4 2024)
+### Phase 1: Foundation ✅ (Completed - Q3 2025)
 - [x] Basic airdrop creation with manual recipient input
 - [x] FHE-encrypted allocation storage (euint64)
 - [x] Confidential claim functionality with homomorphic validation
@@ -173,35 +173,35 @@ Confidential treasury distributions while maintaining auditability.
 - [x] Sepolia testnet deployment with Zama fhEVM
 - [x] Real-time transaction tracking with Etherscan links
 
-### Phase 2: Enhanced Distribution 🚧 (Q1 2025 - In Progress)
+### Phase 2: Enhanced Distribution 🚧 (Q4 2025 - In Progress)
 - [ ] **Batch Address Import** - CSV/JSON upload for 1000+ addresses at once
 - [ ] **Advanced Allocation Management** - Edit, pause, and resume individual allocations
 - [ ] **Multi-Airdrop Dashboard** - Manage multiple campaigns from single interface
 - [ ] **Recipient Allowlisting** - Merkle tree-based eligibility verification
 - [ ] **Gas Optimization** - Reduce claim costs by 40% through batching
 
-### Phase 3: Token Ecosystem 🔮 (Q2-Q3 2025)
+### Phase 3: Token Ecosystem 🔮 (Q1-Q2 2026)
 - [ ] **ERC20 Token Support** - Airdrop any standard token with FHE amounts
 - [ ] **Native Token Integration** - Wrap ETH for confidential distributions
 - [ ] **Vesting Schedules** - Linear/cliff vesting with encrypted unlock amounts
 - [ ] **Claim Windows** - Time-bound campaigns with start/end timestamps
 - [ ] **Auto-Refund Mechanism** - Return unclaimed tokens after deadline
 
-### Phase 4: NFT & SBT 🎨 (Q4 2025)
+### Phase 4: NFT & SBT 🎨 (Q3 2026)
 - [ ] **NFT Airdrops (ERC721)** - Distribute NFTs with hidden rarity/metadata
 - [ ] **Soulbound Tokens (ERC5192)** - Non-transferable achievement badges
 - [ ] **Conditional Claims** - Require proof of NFT ownership or token balance
 - [ ] **Encrypted Metadata** - Hide NFT attributes until reveal date
 - [ ] **Batch NFT Minting** - Gas-efficient mass distribution
 
-### Phase 5: Enterprise Features 🏢 (Q1 2026)
+### Phase 5: Enterprise Features 🏢 (Q4 2026)
 - [ ] **Whitelist Management** - API for dynamic eligibility updates
 - [ ] **Analytics Dashboard** - Encrypted metrics (claim rate, distribution stats)
 - [ ] **Team Collaboration** - Multi-sig controls for campaign management
 - [ ] **Custom Branding** - White-label interface for projects
 - [ ] **Email Notifications** - Alert recipients about new allocations
 
-### Phase 6: Advanced Privacy & Scale 🌌 (Q2 2026+)
+### Phase 6: Advanced Privacy & Scale 🌌 (2027+)
 - [ ] **Anonymous Claiming** - Privacy pools for transaction unlinkability
 - [ ] **Cross-Chain Support** - Deploy on Polygon zkEVM, Arbitrum, Base
 - [ ] **Mainnet Launch** - Ethereum mainnet with audited contracts
@@ -211,24 +211,24 @@ Confidential treasury distributions while maintaining auditability.
 
 ---
 
-### 🎯 2025 Priority Goals
+### 🎯 2025-2026 Priority Goals
 
-**Q1 2025** (Current Quarter)
+**Q4 2025** (Current Quarter)
 1. Implement CSV batch import (target: 5,000 addresses per upload)
 2. Add allocation editing capabilities
 3. Launch multi-airdrop dashboard
 
-**Q2 2025**
+**Q1 2026**
 1. ERC20 token integration with 10+ popular tokens
 2. Vesting schedule implementation
 3. Security audit preparation
 
-**Q3 2025**
+**Q2 2026**
 1. Complete security audit with reputable firm
 2. NFT airdrop beta launch
 3. Performance optimization (target: <50k gas per claim)
 
-**Q4 2025**
+**Q3 2026**
 1. Soulbound token support
 2. Mainnet preparation
 3. Marketing campaign and partnerships
