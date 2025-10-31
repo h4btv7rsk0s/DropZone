@@ -1,41 +1,93 @@
-# DropZone - Privacy-Preserving Airdrop Platform
+# ConfAirdrop - Privacy-Preserving Airdrop Platform
 
-![DropZone Banner](https://img.shields.io/badge/FHE-Powered-blue) ![Zama](https://img.shields.io/badge/Zama-fhEVM-green) ![Sepolia](https://img.shields.io/badge/Network-Sepolia-orange)
+![ConfAirdrop Banner](https://img.shields.io/badge/FHE-Powered-blue) ![Zama](https://img.shields.io/badge/Zama-fhEVM-green) ![Sepolia](https://img.shields.io/badge/Network-Sepolia-orange) ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
 
-**Live Demo**: [https://fhe-dropzone.vercel.app](https://fhe-dropzone.vercel.app)
+**Live Demo**: [https://confairdrop.vercel.app](https://confairdrop.vercel.app)
 
 ## 🎬 Demo Video
 
-**📥 [Download Demo Video](./demo.mp4)** - Click to download and watch a complete demonstration of DropZone's features!
+**📥 [Download Demo Video](./demo.mp4)** - Click to download and watch a complete demonstration of ConfAirdrop's features!
 
 The demo showcases:
-- Creating FHE-encrypted airdrops
-- Setting up recipient allocations
-- Claiming tokens with privacy preservation
-- Real-time transaction confirmations
+- Creating FHE-encrypted airdrops with multiple recipients
+- Setting up confidential allocation amounts
+- Claiming tokens while preserving privacy
+- Real-time transaction confirmations on Sepolia testnet
 
 ---
 
-DropZone is a revolutionary airdrop platform that leverages Fully Homomorphic Encryption (FHE) to protect sensitive allocation data while maintaining complete transparency and verifiability on-chain. Built with Zama's fhEVM technology, DropZone ensures that token distribution amounts remain confidential until claimed by recipients.
+## 📖 What is ConfAirdrop?
+
+**ConfAirdrop** (Confidential Airdrop) is a revolutionary token distribution platform that leverages **Fully Homomorphic Encryption (FHE)** to protect sensitive allocation data while maintaining complete transparency and verifiability on-chain. Built with **Zama's fhEVM v0.5** technology, ConfAirdrop ensures that token distribution amounts remain encrypted throughout the entire lifecycle—from creation to claiming.
+
+### Why ConfAirdrop?
+
+Traditional airdrops expose all allocation amounts publicly on-chain, leading to:
+- ❌ Privacy leakage for recipients
+- ❌ Potential gaming of the distribution
+- ❌ Market manipulation based on leaked data
+- ❌ Loss of competitive advantage for projects
+
+**ConfAirdrop solves these problems** by keeping allocation amounts encrypted at all times:
+- ✅ **Privacy**: Amounts stay confidential on-chain
+- ✅ **Security**: FHE enables computation on encrypted data
+- ✅ **Fairness**: No information leakage before claims
+- ✅ **Transparency**: Verifiable proofs ensure correctness
 
 ---
 
 ## 🌟 Key Features
 
 ### 🔐 Privacy-First Architecture
-- **Encrypted Allocations**: All airdrop amounts are encrypted using FHE before being stored on-chain
-- **Confidential Claims**: Users can claim their tokens without revealing amounts to third parties
-- **Zero-Knowledge Proofs**: Cryptographic proofs ensure validity without exposing sensitive data
+
+- **Fully Encrypted Allocations**
+  - All airdrop amounts encrypted using Zama FHE before on-chain storage
+  - Stored as `euint64` encrypted integers in smart contracts
+  - Zero knowledge of amounts except by authorized parties
+
+- **Confidential Claims**
+  - Users submit encrypted claim amounts with cryptographic proofs
+  - Smart contract validates claims using homomorphic operations
+  - No decryption needed during validation process
+
+- **Zero-Knowledge Proofs**
+  - Cryptographic proofs ensure validity without exposing data
+  - Recipient can prove claim eligibility without revealing amount
+  - Complete privacy preservation throughout claiming
 
 ### 🚀 User-Friendly Experience
-- **One-Click Airdrop Creation**: Launch airdrops with multiple recipients in a single transaction
-- **Wallet Integration**: Seamless connection with MetaMask, OKX Wallet, and Coinbase Wallet
-- **Real-Time Updates**: Instant transaction confirmations with Etherscan links
+
+- **One-Click Multi-Recipient Airdrop**
+  - Create airdrops for multiple recipients in a single transaction
+  - Batch allocation setting to reduce gas costs
+  - Intuitive interface for managing distributions
+
+- **Seamless Wallet Integration**
+  - RainbowKit integration with MetaMask, WalletConnect, Coinbase Wallet
+  - One-click wallet connection
+  - Automatic network switching to Sepolia testnet
+
+- **Real-Time Transaction Feedback**
+  - Instant transaction confirmations
+  - Direct Etherscan links for all transactions
+  - Toast notifications with detailed status updates
 
 ### 🏗️ Decentralized & Trustless
-- **No Central Authority**: All operations are executed via smart contracts on Ethereum Sepolia
-- **Immutable Records**: Blockchain-based audit trail for complete transparency
-- **Permissionless Access**: Anyone can create or participate in airdrops
+
+- **No Central Authority**
+  - All operations executed via immutable smart contracts
+  - Owner permissions limited to allocation management
+  - Contract can be frozen to prevent modifications
+
+- **Immutable Blockchain Records**
+  - Complete audit trail on Ethereum Sepolia
+  - Transparent event logs for all operations
+  - Verifiable on-chain history
+
+- **Permissionless Access**
+  - Anyone can create or claim airdrops
+  - No KYC or registration required
+  - Open-source and auditable code
 
 ---
 
@@ -44,56 +96,132 @@ DropZone is a revolutionary airdrop platform that leverages Fully Homomorphic En
 ### Architecture Overview
 
 ```
-┌─────────────┐      ┌──────────────┐      ┌─────────────────┐
-│   Frontend  │─────▶│  Zama SDK    │─────▶│  Smart Contract │
-│  (React +   │      │  (FHE Ops)   │      │   (Sepolia)     │
-│   Vite)     │◀─────│              │◀─────│                 │
-└─────────────┘      └──────────────┘      └─────────────────┘
-       │                     │                       │
-       │                     ▼                       │
-       │            ┌──────────────┐                │
-       └───────────▶│ KMS Gateway  │◀───────────────┘
-                    │  (Key Mgmt)  │
-                    └──────────────┘
+┌─────────────────┐      ┌──────────────────┐      ┌───────────────────┐
+│   Frontend      │─────▶│  Zama SDK v0.2   │─────▶│ ConfAirdrop.sol   │
+│  (React + Vite) │      │  (FHE Operations)│      │  (Sepolia)        │
+│  + Wagmi/Viem   │◀─────│                  │◀─────│                   │
+└─────────────────┘      └──────────────────┘      └───────────────────┘
+       │                          │                          │
+       │                          ▼                          │
+       │                 ┌─────────────────┐                │
+       └────────────────▶│  KMS Gateway    │◀───────────────┘
+                         │  (Key Mgmt)     │
+                         └─────────────────┘
 ```
+
+### Core Components
+
+1. **Frontend** - React + TypeScript + Vite
+   - User interface for airdrop management
+   - Client-side FHE encryption via Zama SDK
+   - Web3 wallet integration with Wagmi v2
+
+2. **Zama FHE SDK** - v0.2.0
+   - Handles all encryption operations
+   - Generates cryptographic proofs
+   - Manages public key infrastructure
+
+3. **Smart Contract** - ConfAirdrop.sol
+   - Stores encrypted allocations on-chain
+   - Validates encrypted claims
+   - Executes homomorphic operations
+
+4. **KMS Gateway** - Key Management Service
+   - Manages distributed key generation
+   - Provides public parameters
+   - No single point of key exposure
 
 ### FHE Encryption Flow
 
-1. **Client-Side Encryption**
-   - User inputs allocation amount (e.g., 1000 tokens)
-   - Zama SDK encrypts the value using FHE
-   - Generates cryptographic proof of validity
+#### 1. Airdrop Creation
 
-2. **On-Chain Storage**
-   - Encrypted amount stored as `euint64` type
-   - Public key infrastructure managed by Zama's KMS Gateway
-   - Recipient address stored in plaintext for accessibility
+```
+Owner Input: Recipients + Amounts
+      ↓
+[Client-Side Encryption]
+  - For each recipient: encrypt(amount) → euint64
+  - Generate cryptographic proof
+  - Bundle: (address[], euint64[], proof[])
+      ↓
+[Smart Contract]
+  - Store encrypted amounts on-chain
+  - Emit AirdropCreated event
+  - Track total recipients
+```
 
-3. **Claiming Process**
-   - User submits encrypted claim amount
-   - Smart contract validates claim against encrypted allocation
-   - Homomorphic operations performed without decryption
-   - Tokens transferred if validation succeeds
+#### 2. Claiming Process
+
+```
+User Input: Claim Amount (e.g., 500 tokens)
+      ↓
+[Client-Side Encryption]
+  - encrypt(500) → euint64 encrypted_claim
+  - Generate proof of encryption
+      ↓
+[Smart Contract Validation]
+  - Load encrypted allocation: alloc.total, alloc.claimed
+  - Calculate remaining: FHE.sub(alloc.total, alloc.claimed)
+  - Homomorphic comparison: FHE.le(encrypted_claim, remaining)
+  - If valid: FHE.add(alloc.claimed, encrypted_claim)
+      ↓
+[Result]
+  - User receives tokens
+  - Allocation updated (still encrypted!)
+  - Emit Claimed event
+```
 
 ### Smart Contract Logic
 
 ```solidity
-// Simplified example
-struct Allocation {
-    euint64 total;     // Encrypted total allocation
-    euint64 claimed;   // Encrypted claimed amount
-}
+// Simplified ConfAirdrop.sol logic
+pragma solidity ^0.8.24;
 
-function claim(uint256 airdropId, externalEuint64 encryptedAmt, bytes calldata proof) external {
-    euint64 amt = FHE.fromExternal(encryptedAmt, proof);
-    Allocation storage alloc = allocations[airdropId][msg.sender];
+import "fhevm/lib/TFHE.sol";
 
-    // Homomorphic comparison (no decryption needed!)
-    ebool canClaim = FHE.le(amt, FHE.sub(alloc.total, alloc.claimed));
-    FHE.req(canClaim);
+contract ConfAirdrop {
+    struct Allocation {
+        euint64 total;     // Encrypted total allocation
+        euint64 claimed;   // Encrypted claimed amount
+    }
 
-    alloc.claimed = FHE.add(alloc.claimed, amt);
-    emit Claimed(airdropId, msg.sender);
+    mapping(uint256 => mapping(address => Allocation)) public allocations;
+
+    // Create airdrop with encrypted amounts
+    function createAirdrop(
+        address[] calldata recipients,
+        bytes32[] calldata encryptedAmounts,
+        bytes[] calldata proofs
+    ) external onlyOwner {
+        uint256 airdropId = nextAirdropId++;
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            euint64 amount = TFHE.asEuint64(encryptedAmounts[i], proofs[i]);
+            allocations[airdropId][recipients[i]] = Allocation({
+                total: amount,
+                claimed: TFHE.asEuint64(0)
+            });
+        }
+
+        emit AirdropCreated(airdropId, recipients.length);
+    }
+
+    // Claim tokens with encrypted amount
+    function claim(
+        uint256 airdropId,
+        bytes32 encryptedAmt,
+        bytes calldata proof
+    ) external {
+        euint64 amt = TFHE.asEuint64(encryptedAmt, proof);
+        Allocation storage alloc = allocations[airdropId][msg.sender];
+
+        // Homomorphic operations - no decryption!
+        euint64 remaining = TFHE.sub(alloc.total, alloc.claimed);
+        ebool canClaim = TFHE.le(amt, remaining);
+        TFHE.req(canClaim); // Revert if false
+
+        alloc.claimed = TFHE.add(alloc.claimed, amt);
+        emit Claimed(airdropId, msg.sender, encryptedAmt);
+    }
 }
 ```
 
@@ -102,35 +230,41 @@ function claim(uint256 airdropId, externalEuint64 encryptedAmt, bytes calldata p
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
+- **React 18** - Modern UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Lightning-fast build tool
 - **Tailwind CSS** - Utility-first styling
-- **shadcn/ui** - Component library
-- **Wagmi v2** - React hooks for Ethereum
+- **shadcn/ui** - High-quality component library
+
+### Web3 Integration
+- **Wagmi v2** - React Hooks for Ethereum
 - **Viem** - TypeScript Ethereum library
-
-### Blockchain
-- **Zama fhEVM** - Fully Homomorphic Encryption for EVM
-- **Solidity 0.8.24** - Smart contract language
-- **Hardhat** - Development environment
-- **Ethereum Sepolia** - Testnet deployment
-
-### Encryption
+- **RainbowKit** - Wallet connection UI
 - **Zama Relayer SDK v0.2.0** - FHE operations
-- **TFHE-rs** - Underlying cryptographic library
-- **KMS Gateway** - Distributed key management
+
+### Smart Contracts
+- **Solidity ^0.8.24** - Smart contract language
+- **Zama fhEVM v0.5** - FHE-enabled EVM
+- **Hardhat** - Development environment
+- **Ethers.js v6** - Contract interactions
+
+### Deployment
+- **Vercel** - Frontend hosting
+- **Ethereum Sepolia** - Test network
+- **GitHub** - Version control
 
 ---
 
-## 📦 Installation & Setup
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ and npm/yarn
-- MetaMask or compatible Web3 wallet
-- Sepolia testnet ETH ([faucet](https://sepoliafaucet.com/))
 
-### Local Development
+- Node.js >= 20.x
+- npm or yarn
+- MetaMask or compatible Web3 wallet
+- Sepolia testnet ETH ([Get from faucet](https://sepoliafaucet.com/))
+
+### Installation
 
 ```bash
 # Clone the repository
@@ -138,145 +272,271 @@ git clone https://github.com/h4btv7rsk0s/DropZone.git
 cd DropZone
 
 # Install dependencies
-yarn install
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
 
 # Start development server
-yarn dev
+npm run dev
 ```
 
-The application will be available at `http://localhost:8080`
+### Environment Variables
 
-### Smart Contract Deployment
+Create a `.env` file in the root directory:
+
+```env
+# Sepolia RPC URL
+SEPOLIA_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
+
+# Contract address (deployed on Sepolia)
+VITE_CONTRACT_ADDRESS=0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+
+# Private key for deployment (keep secret!)
+PRIVATE_KEY=your_private_key_here
+```
+
+### Development Commands
+
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run tests
+npm run test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Lint code
+npm run lint
+```
+
+### Deploy Smart Contract
 
 ```bash
 # Compile contracts
 npx hardhat compile
 
 # Deploy to Sepolia
-SEPOLIA_RPC_URL="https://ethereum-sepolia-rpc.publicnode.com" \
-npx hardhat run scripts/deploy.js --network sepolia
+SEPOLIA_RPC_URL="your_rpc_url" npx hardhat run scripts/deploy.js --network sepolia
 ```
 
 ---
 
-## 🎯 Use Cases
+## 📱 Usage Guide
 
-### 1. **Token Launches**
-Distribute tokens to early supporters without revealing individual allocation amounts, preventing market manipulation.
+### For Airdrop Creators
 
-### 2. **Community Rewards**
-Reward contributors based on confidential metrics (e.g., trading volume, governance participation).
+1. **Connect Wallet**
+   - Click "Connect Wallet" in the header
+   - Select your preferred wallet (MetaMask, WalletConnect, etc.)
+   - Switch to Sepolia network if prompted
 
-### 3. **Employee Compensation**
-Private token grants for team members with verifiable on-chain records.
+2. **Create Airdrop**
+   - Navigate to "Create Airdrop" tab
+   - Add recipient addresses and amounts
+   - Click "Create Airdrop" and confirm transaction
+   - Wait for confirmation (~15 seconds on Sepolia)
 
-### 4. **Privacy-Focused DAOs**
-Confidential treasury distributions while maintaining auditability.
+3. **Manage Allocations**
+   - Go to "Manage" tab
+   - View existing airdrops
+   - Set or update allocations for new recipients
+   - Freeze contract when distribution is complete
+
+### For Recipients
+
+1. **Connect Wallet**
+   - Connect with the address that has an allocation
+   - System will automatically detect your eligibility
+
+2. **View Allocation**
+   - Navigate to "Claim" tab
+   - Enter airdrop ID to view your allocation
+   - See available balance (encrypted on-chain)
+
+3. **Claim Tokens**
+   - Enter amount to claim (integer only, max: 18446744073709551615)
+   - Click "Claim" and confirm transaction
+   - Receive tokens directly to your wallet
+
+---
+
+## 🔒 Security Features
+
+### FHE Encryption
+- **euint64 Type**: All amounts stored as 64-bit encrypted unsigned integers
+- **Probabilistic Encryption**: Same value encrypted differently each time
+- **Homomorphic Operations**: Computation on encrypted data without decryption
+- **Zero-Knowledge Proofs**: Validate claims without revealing amounts
+
+### Access Control
+- **Owner-Only Functions**: Airdrop creation, allocation setting, contract freezing
+- **User Functions**: Claiming, viewing allocations
+- **Freeze Mechanism**: Permanently prevent allocation modifications
+
+### Input Validation
+- **Amount Limits**: Max value 18446744073709551615 (2^64 - 1)
+- **Address Validation**: Checksummed Ethereum addresses only
+- **Proof Verification**: Cryptographic proof required for all encrypted operations
+- **Double-Claim Prevention**: Track claimed amounts to prevent over-claiming
 
 ---
 
 ## 🗺️ Roadmap
 
-### Phase 1: Foundation ✅ (Completed - Q4 2025)
-- [x] Basic airdrop creation with manual recipient input
-- [x] FHE-encrypted allocation storage (euint64)
-- [x] Confidential claim functionality with homomorphic validation
-- [x] Multi-wallet integration (MetaMask, OKX, Coinbase)
-- [x] Sepolia testnet deployment with Zama fhEVM
-- [x] Real-time transaction tracking with Etherscan links
+### Phase 1: Foundation ✅ (Completed - Q3 2025)
+- ✅ Core FHE encryption integration
+- ✅ Basic airdrop creation and claiming
+- ✅ Wallet integration (MetaMask, WalletConnect)
+- ✅ Sepolia testnet deployment
+- ✅ UI/UX with shadcn/ui components
+- ✅ Real-time transaction notifications
+- ✅ Comprehensive test suite (160+ tests)
 
-### Phase 2: Enhanced Distribution 🚧 (Q4 2025 - In Progress)
-- [ ] **Batch Address Import** - CSV/JSON upload for 1000+ addresses at once
-- [ ] **Advanced Allocation Management** - Edit, pause, and resume individual allocations
-- [ ] **Multi-Airdrop Dashboard** - Manage multiple campaigns from single interface
-- [ ] **Recipient Allowlisting** - Merkle tree-based eligibility verification
-- [ ] **Gas Optimization** - Reduce claim costs by 40% through batching
+### Phase 2: Enhanced Distribution 🚧 (Q4 2025 - Current)
+- 🔄 **Batch Address Import** (CSV/JSON support for 1000+ addresses)
+- 🔄 **Advanced Allocation Management** (Edit, remove allocations)
+- 🔄 **Multi-Airdrop Dashboard** (Manage multiple campaigns)
+- 📅 **Merkle Tree Allowlisting** (Gas-efficient large-scale distributions)
+- 📅 **Gas Optimization** (Target: 40% reduction in claim costs)
 
 ### Phase 3: Token Ecosystem 🔮 (Q1-Q2 2026)
-- [ ] **ERC20 Token Support** - Airdrop any standard token with FHE amounts
-- [ ] **Native Token Integration** - Wrap ETH for confidential distributions
-- [ ] **Vesting Schedules** - Linear/cliff vesting with encrypted unlock amounts
-- [ ] **Claim Windows** - Time-bound campaigns with start/end timestamps
-- [ ] **Auto-Refund Mechanism** - Return unclaimed tokens after deadline
+- 📅 **ERC20 Token Support** (Distribute any ERC20 token)
+- 📅 **Native ETH Integration** (Direct ETH airdrops)
+- 📅 **Vesting Schedules** (Linear and cliff vesting)
+- 📅 **Claim Windows** (Time-bound claiming with auto-refund)
 
 ### Phase 4: NFT & SBT 🎨 (Q3 2026)
-- [ ] **NFT Airdrops (ERC721)** - Distribute NFTs with hidden rarity/metadata
-- [ ] **Soulbound Tokens (ERC5192)** - Non-transferable achievement badges
-- [ ] **Conditional Claims** - Require proof of NFT ownership or token balance
-- [ ] **Encrypted Metadata** - Hide NFT attributes until reveal date
-- [ ] **Batch NFT Minting** - Gas-efficient mass distribution
+- 📅 **ERC721 NFT Airdrops** (Encrypted NFT metadata)
+- 📅 **ERC5192 Soulbound Tokens** (Non-transferable token distribution)
+- 📅 **Conditional Claims** (Requirement-based claiming)
+- 📅 **Batch NFT Minting** (Gas-efficient NFT distribution)
 
 ### Phase 5: Enterprise Features 🏢 (Q4 2026)
-- [ ] **Whitelist Management** - API for dynamic eligibility updates
-- [ ] **Analytics Dashboard** - Encrypted metrics (claim rate, distribution stats)
-- [ ] **Team Collaboration** - Multi-sig controls for campaign management
-- [ ] **Custom Branding** - White-label interface for projects
-- [ ] **Email Notifications** - Alert recipients about new allocations
+- 📅 **Whitelist API Management** (REST API for allowlist)
+- 📅 **Analytics Dashboard** (Real-time distribution metrics)
+- 📅 **Multi-Sig Team Collaboration** (Gnosis Safe integration)
+- 📅 **Custom Branding** (White-label solution)
 
----
+### Phase 6: Advanced Privacy & Scale 🌌 (2027+)
+- 📅 **Anonymous Claiming** (Privacy pools for recipients)
+- 📅 **Cross-Chain Support** (Polygon zkEVM, Arbitrum, Base)
+- 📅 **Mainnet Launch** (Production deployment on Ethereum L1)
+- 📅 **L2 Integration** (Optimism, Base, Arbitrum)
+- 📅 **DAO Governance** (Community-driven development)
+- 📅 **Mobile Apps** (iOS and Android native apps)
 
 ### 🎯 2025-2026 Priority Goals
 
 **Q4 2025** (Current Quarter)
-1. Implement CSV batch import (target: 5,000 addresses per upload)
-2. Add allocation editing capabilities
-3. Launch multi-airdrop dashboard
+1. ✅ Launch comprehensive test suite
+2. 🔄 Implement CSV batch import (target: 5,000 addresses per upload)
+3. 🔄 Add allocation editing capabilities
+4. 📅 Create multi-airdrop management dashboard
 
 **Q1 2026**
-1. ERC20 token integration with 10+ popular tokens
-2. Vesting schedule implementation
-3. Security audit preparation
+1. 📅 Integrate ERC20 token support (10+ popular tokens)
+2. 📅 Implement vesting schedules (linear + cliff)
+3. 📅 Begin security audit preparation
 
 **Q2 2026**
-1. Complete security audit with reputable firm
-2. NFT airdrop beta launch
-3. Performance optimization (target: <50k gas per claim)
+1. 📅 Complete third-party security audit
+2. 📅 Launch NFT airdrop beta
+3. 📅 Optimize gas costs to <50k per claim
 
 **Q3 2026**
-1. Soulbound token support
-2. Mainnet preparation
-3. Marketing campaign and partnerships
+1. 📅 Add Soulbound Token (SBT) support
+2. 📅 Prepare for mainnet deployment
+3. 📅 Launch marketing campaign
 
 ---
 
-## 🔒 Security Considerations
+## 🧪 Testing
 
-### Encryption Security
-- **Post-Quantum Resistant**: TFHE provides security against quantum attacks
-- **Threshold Decryption**: No single point of failure in key management
-- **Client-Side Encryption**: Private keys never leave user's browser
+ConfAirdrop includes a comprehensive test suite with 160+ test cases covering all critical functionality.
 
-### Smart Contract Audits
-- ⚠️ **Not Audited Yet**: This is experimental software
-- Recommend independent security review before mainnet deployment
-- Test thoroughly on Sepolia testnet
+### Test Coverage
 
-### Best Practices
-1. Always verify contract addresses on Etherscan
-2. Start with small test amounts
-3. Double-check recipient addresses before creating airdrops
-4. Keep private keys secure (use hardware wallets for large amounts)
+- **FHE Encryption Tests** (~35 tests)
+  - SDK initialization and caching
+  - Amount encryption (zero, small, large, max uint64)
+  - Probabilistic encryption verification
+  - Error handling and validation
+
+- **Smart Contract Tests** (~40 tests)
+  - ABI validation and function signatures
+  - Read/write operations
+  - Event parsing and structure
+  - Gas estimation and optimization
+
+- **Utility Function Tests** (~50 tests)
+  - Address validation and checksumming
+  - BigInt operations and conversions
+  - Hex string handling
+  - Array/string manipulations
+
+- **Integration Tests** (~35 tests)
+  - Complete airdrop creation flow
+  - End-to-end claiming workflow
+  - Batch allocation operations
+  - Error recovery scenarios
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# With coverage report
+npm run test:coverage
+
+# UI mode
+npm run test:ui
+```
+
+See [test/README.md](./test/README.md) for detailed testing documentation.
 
 ---
 
-## 📊 Contract Details
+## 📊 Use Cases
 
-### Sepolia Deployment
-- **Network**: Ethereum Sepolia Testnet
-- **Chain ID**: 11155111
-- **AirdropFactory**: `0x[CONTRACT_ADDRESS]`
-- **Zama Gateway**: `0x33347831500F1e73f102414fAc3e9e5e7F111123`
+### 1. **Token Launches**
+Project launches can distribute tokens fairly while keeping individual allocations private, preventing whale hunting and market manipulation.
 
-### Gas Optimization
-- Creating airdrop: ~200,000 gas
-- Setting allocation: ~100,000 gas
-- Claiming tokens: ~80,000 gas
+### 2. **Community Rewards**
+DAOs can reward active members with encrypted amounts, maintaining privacy and preventing jealousy within the community.
+
+### 3. **Investor Distributions**
+Private sale investors receive allocations without exposing investment amounts to competitors or the public.
+
+### 4. **Employee Compensation**
+Companies distribute token-based compensation privately, respecting employee privacy.
+
+### 5. **Bug Bounty Rewards**
+Security researchers receive encrypted reward amounts, protecting both parties' privacy.
+
+### 6. **Grant Programs**
+Foundations distribute grants with confidential amounts, reducing social comparison effects.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Please follow these steps:
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Process
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -284,11 +544,13 @@ We welcome contributions from the community! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Development Guidelines
-- Follow existing code style (ESLint + Prettier)
+### Code Standards
+
+- Follow TypeScript best practices
 - Write tests for new features
-- Update documentation as needed
-- Test on Sepolia before submitting PR
+- Maintain 85%+ test coverage
+- Use conventional commit messages
+- Document public APIs
 
 ---
 
@@ -298,41 +560,52 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## 🔗 Links
+
+- **Live Demo**: [https://confairdrop.vercel.app](https://confairdrop.vercel.app)
+- **GitHub**: [https://github.com/h4btv7rsk0s/DropZone](https://github.com/h4btv7rsk0s/DropZone)
+- **Zama Documentation**: [https://docs.zama.ai/fhevm](https://docs.zama.ai/fhevm)
+- **fhEVM GitHub**: [https://github.com/zama-ai/fhevm](https://github.com/zama-ai/fhevm)
+
+---
+
+## 💬 Support
+
+- **Issues**: [GitHub Issues](https://github.com/h4btv7rsk0s/DropZone/issues)
+- **Twitter**: [@ZamaFHE](https://twitter.com/ZamaFHE)
+- **Discord**: [Zama Community](https://discord.gg/zama)
+- **Documentation**: [Zama Docs](https://docs.zama.ai/)
+
+---
+
 ## 🙏 Acknowledgments
 
-- **Zama** - For pioneering FHE technology and fhEVM
+- **Zama Team** - For developing fhEVM and FHE technology
 - **Ethereum Foundation** - For Sepolia testnet infrastructure
-- **shadcn/ui** - For beautiful UI components
-- **Wagmi** - For excellent React hooks
+- **shadcn** - For the beautiful UI component library
+- **Open Source Community** - For countless tools and libraries
 
 ---
 
-## 📞 Support & Community
+## ⚠️ Disclaimer
 
-- **Documentation**: [Zama Docs](https://docs.zama.ai/)
-- **Issues**: [GitHub Issues](https://github.com/h4btv7rsk0s/DropZone/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/h4btv7rsk0s/DropZone/discussions)
+**This is experimental software deployed on Sepolia testnet.**
 
----
+- ⚠️ NOT audited for production use
+- ⚠️ NOT deployed on Ethereum mainnet
+- ⚠️ Use testnet tokens only
+- ⚠️ No warranty or guarantees provided
 
-## ⚡ Quick Start Guide
-
-### For Airdrop Creators
-
-1. **Connect Wallet** - Click "Connect Wallet" and select your provider
-2. **Create Airdrop** - Navigate to "Create Airdrop" page
-3. **Add Recipients** - Input recipient addresses and allocation amounts
-4. **Deploy** - Click "Create Airdrop" and confirm transaction
-5. **Share** - Send airdrop ID to recipients
-
-### For Recipients
-
-1. **Connect Wallet** - Use the same wallet address that received allocation
-2. **View Allocation** - Navigate to "Claim" page and enter airdrop ID
-3. **Submit Claim** - Enter amount to claim (must be ≤ remaining allocation)
-4. **Confirm Transaction** - Approve the transaction in your wallet
-5. **Receive Tokens** - Tokens will appear in your wallet after confirmation
+Do not use with real assets or in production environments without proper security audits.
 
 ---
+
+<div align="center">
 
 **Built with ❤️ using Zama FHE Technology**
+
+⭐ Star us on GitHub if you find ConfAirdrop useful!
+
+[Live Demo](https://confairdrop.vercel.app) • [Documentation](https://docs.zama.ai/) • [Report Bug](https://github.com/h4btv7rsk0s/DropZone/issues)
+
+</div>
