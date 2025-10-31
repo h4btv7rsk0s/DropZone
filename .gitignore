@@ -9,3 +9,9 @@ build/
 .vscode/
 .idea/
 .vercel
+coverage/
+*.lockb
+bun.lockb
+package-lock.json
+yarn.lock
+.turbo

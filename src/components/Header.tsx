@@ -6,7 +6,7 @@ const Header = () => {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">🪂</span>
+            <span className="text-4xl leading-none">🪂</span>
             <span className="text-2xl font-bold gradient-text">ConfAirdrop</span>
           </div>
           

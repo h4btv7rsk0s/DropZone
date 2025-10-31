@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
-            <span className="text-3xl">🪂</span>
+            <span className="text-3xl leading-none">🪂</span>
             <span className="text-xl font-bold gradient-text">ConfAirdrop</span>
           </div>
           

@@ -4,6 +4,18 @@
 
 **Live Demo**: [https://fhe-dropzone.vercel.app](https://fhe-dropzone.vercel.app)
 
+## 🎬 Demo Video
+
+**📥 [Download Demo Video](./demo.mp4)** - Click to download and watch a complete demonstration of DropZone's features!
+
+The demo showcases:
+- Creating FHE-encrypted airdrops
+- Setting up recipient allocations
+- Claiming tokens with privacy preservation
+- Real-time transaction confirmations
+
+---
+
 DropZone is a revolutionary airdrop platform that leverages Fully Homomorphic Encryption (FHE) to protect sensitive allocation data while maintaining complete transparency and verifiability on-chain. Built with Zama's fhEVM technology, DropZone ensures that token distribution amounts remain confidential until claimed by recipients.
 
 ---
@@ -165,7 +177,7 @@ Confidential treasury distributions while maintaining auditability.
 
 ## 🗺️ Roadmap
 
-### Phase 1: Foundation ✅ (Completed - Q3 2025)
+### Phase 1: Foundation ✅ (Completed - Q4 2025)
 - [x] Basic airdrop creation with manual recipient input
 - [x] FHE-encrypted allocation storage (euint64)
 - [x] Confidential claim functionality with homomorphic validation
@@ -200,14 +212,6 @@ Confidential treasury distributions while maintaining auditability.
 - [ ] **Team Collaboration** - Multi-sig controls for campaign management
 - [ ] **Custom Branding** - White-label interface for projects
 - [ ] **Email Notifications** - Alert recipients about new allocations
-
-### Phase 6: Advanced Privacy & Scale 🌌 (2027+)
-- [ ] **Anonymous Claiming** - Privacy pools for transaction unlinkability
-- [ ] **Cross-Chain Support** - Deploy on Polygon zkEVM, Arbitrum, Base
-- [ ] **Mainnet Launch** - Ethereum mainnet with audited contracts
-- [ ] **L2 Integration** - Optimistic rollups for lower gas costs
-- [ ] **DAO Governance** - Community-controlled treasury and upgrades
-- [ ] **Mobile App** - iOS/Android native apps with embedded wallets
 
 ---
 
