@@ -5,7 +5,6 @@ import { useAccount, useReadContract, useWriteContract, usePublicClient } from '
 import { useState, useEffect } from 'react';
 import { Lock, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { parseEther } from 'viem';
 import { CONTRACTS, ABIS } from '@/config/contracts';
 import { initializeFHE, encryptAmount } from '@/lib/fhe';
 
@@ -61,8 +60,8 @@ const AirdropDashboard = () => {
     setClaiming(true);
 
     try {
-      // Convert decimal amount to wei (e.g., "0.01" -> 10000000000000000n)
-      const amount = parseEther(claimAmount);
+      // Convert to integer (euint64 max: 18446744073709551615)
+      const amount = BigInt(claimAmount);
 
       toast.info('Encrypting claim amount...');
       const { encryptedAmount, proof } = await encryptAmount(

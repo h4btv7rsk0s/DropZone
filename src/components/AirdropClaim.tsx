@@ -5,7 +5,6 @@ import { useAccount, useWriteContract, usePublicClient } from 'wagmi';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Gift, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { parseEther } from 'viem';
 import { CONTRACTS, ABIS } from '@/config/contracts';
 import { encryptAmount, initializeFHE } from '@/lib/fhe';
 
@@ -43,8 +42,8 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
 
     setClaiming(true);
     try {
-      // Convert decimal amount to wei (e.g., "0.01" -> 10000000000000000n)
-      const amount = parseEther(claimAmount);
+      // Convert to integer (euint64 max: 18446744073709551615)
+      const amount = BigInt(claimAmount);
 
       toast.info('Encrypting claim amount...');
       const { encryptedAmount, proof } = await encryptAmount(
@@ -141,13 +140,14 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
                     </label>
                     <Input
                       type="number"
-                      placeholder="Enter amount to claim"
+                      step="1"
+                      placeholder="Enter amount to claim (integer only)"
                       value={claimAmount}
                       onChange={(e) => setClaimAmount(e.target.value)}
                       disabled={claiming}
                     />
                     <p className="text-xs text-muted-foreground mt-2">
-                      💡 You can only claim up to your remaining allocation
+                      💡 Enter whole numbers only. Maximum: 18446744073709551615
                     </p>
                   </div>
                   <Button

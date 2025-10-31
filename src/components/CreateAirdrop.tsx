@@ -6,7 +6,6 @@ import { useAccount, useWriteContract, usePublicClient } from 'wagmi';
 import { useState, useEffect } from 'react';
 import { Rocket, Loader2, Plus, Trash2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import { parseEther } from 'viem';
 import { CONTRACTS, ABIS } from '@/config/contracts';
 import { encryptAmount, initializeFHE } from '@/lib/fhe';
 
@@ -106,8 +105,8 @@ const CreateAirdrop = () => {
 
       for (let i = 0; i < validRecipients.length; i++) {
         const recipient = validRecipients[i];
-        // Convert decimal amount (e.g., "0.01") to wei using parseEther
-        const amount = parseEther(recipient.amount);
+        // Convert to integer (euint64 max: 18446744073709551615)
+        const amount = BigInt(recipient.amount);
 
         toast.info(`[${i + 1}/${validRecipients.length}] Encrypting ${recipient.amount} for ${recipient.address.slice(0, 6)}...`);
 
@@ -305,8 +304,8 @@ const CreateAirdrop = () => {
                           />
                           <Input
                             type="number"
-                            step="0.000000000000000001"
-                            placeholder="Amount in tokens (e.g., 100 or 0.01)"
+                            step="1"
+                            placeholder="Amount in tokens (integer only, max: 18446744073709551615)"
                             value={recipient.amount}
                             onChange={(e) => updateRecipient(index, 'amount', e.target.value)}
                             disabled={creating}
