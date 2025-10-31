@@ -120,7 +120,20 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
       });
 
       if (receipt.status === 'success') {
-        toast.success('Claim successful!');
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+        toast.success(
+          <div>
+            <p>Claim successful!</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         setClaimAmount('');
         setTimeout(() => {
           refetchAllocation();

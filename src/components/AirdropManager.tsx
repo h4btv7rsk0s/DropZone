@@ -93,7 +93,20 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
       });
 
       if (receipt.status === 'success') {
-        toast.success(`Allocation set for ${recipientAddress}!`);
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+        toast.success(
+          <div>
+            <p>Allocation set for {recipientAddress}!</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         setRecipientAddress('');
         setAllocationAmount('');
       } else {
@@ -168,7 +181,20 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
       });
 
       if (receipt.status === 'success') {
-        toast.success(`Batch allocation set for ${validAllocations.length} addresses!`);
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+        toast.success(
+          <div>
+            <p>Batch allocation set for {validAllocations.length} addresses!</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         setBatchAllocations([{ address: '', amount: '' }]);
       } else {
         toast.error('Transaction failed');

@@ -6,6 +6,7 @@ import { useAccount, useWriteContract, usePublicClient } from 'wagmi';
 import { useState, useEffect } from 'react';
 import { Rocket, Loader2, Plus, Trash2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { parseEther } from 'viem';
 import { CONTRACTS, ABIS } from '@/config/contracts';
 import { encryptAmount, initializeFHE } from '@/lib/fhe';
 
@@ -94,13 +95,61 @@ const CreateAirdrop = () => {
     setCreating(true);
 
     try {
-      // Step 1: Create airdrop
-      toast.info('Creating airdrop...');
+      // Step 1: Encrypt all amounts with FHE
+      toast.info(`Encrypting ${validRecipients.length} allocations with FHE...`);
+
+      const encryptedData: Array<{
+        address: `0x${string}`;
+        encryptedAmount: `0x${string}`;
+        proof: `0x${string}`;
+      }> = [];
+
+      for (let i = 0; i < validRecipients.length; i++) {
+        const recipient = validRecipients[i];
+        // Convert decimal amount (e.g., "0.01") to wei using parseEther
+        const amount = parseEther(recipient.amount);
+
+        toast.info(`[${i + 1}/${validRecipients.length}] Encrypting ${recipient.amount} for ${recipient.address.slice(0, 6)}...`);
+
+        try {
+          const encrypted = await encryptAmount(
+            amount,
+            CONTRACTS.AirdropFactory,
+            address
+          );
+
+          encryptedData.push({
+            address: recipient.address as `0x${string}`,
+            encryptedAmount: encrypted.encryptedAmount,
+            proof: encrypted.proof,
+          });
+
+          console.log(`[CreateAirdrop] Encrypted [${i + 1}/${validRecipients.length}]:`, {
+            address: recipient.address,
+            original: amount.toString(),
+            encrypted: encrypted.encryptedAmount,
+            proofLength: encrypted.proof.length
+          });
+        } catch (error: any) {
+          toast.error(`FHE encryption failed for recipient ${i + 1}: ${error.message}`);
+          throw error;
+        }
+      }
+
+      toast.success(`✅ All allocations encrypted with FHE!`);
+
+      // Step 2: Create airdrop with all allocations in ONE transaction
+      toast.info('Creating airdrop with all allocations in single transaction...');
+
+      const addresses = encryptedData.map(d => d.address);
+      const encryptedAmounts = encryptedData.map(d => d.encryptedAmount);
+      const proofs = encryptedData.map(d => d.proof);
+
       const createHash = await writeContractAsync({
         address: CONTRACTS.AirdropFactory,
         abi: ABIS.AirdropFactory,
-        functionName: 'createAirdrop',
-        args: [name, description],
+        functionName: 'createAirdropWithAllocations',
+        args: [name, description, addresses, encryptedAmounts, proofs],
       });
 
       toast.info('Waiting for confirmation...');
@@ -125,59 +174,21 @@ const CreateAirdrop = () => {
       }
 
       const airdropId = BigInt(airdropCreatedEvent.topics[1] || '0');
-      toast.success(`Airdrop #${airdropId} created!`);
 
-      // Step 2: Set allocations for each recipient
-      toast.info(`Setting allocations for ${validRecipients.length} recipients...`);
-
-      for (let i = 0; i < validRecipients.length; i++) {
-        const recipient = validRecipients[i];
-
-        toast.info(`[${i + 1}/${validRecipients.length}] Encrypting allocation for ${recipient.address.slice(0, 6)}...`);
-
-        const amount = BigInt(recipient.amount);
-
-        // 确保 FHE 加密成功
-        let encryptedAmount: `0x${string}`;
-        let proof: `0x${string}`;
-
-        try {
-          const encrypted = await encryptAmount(
-            amount,
-            CONTRACTS.AirdropFactory,
-            address
-          );
-          encryptedAmount = encrypted.encryptedAmount;
-          proof = encrypted.proof;
-
-          console.log('[CreateAirdrop] Encrypted:', {
-            original: amount.toString(),
-            encrypted: encryptedAmount,
-            proofLength: proof.length
-          });
-        } catch (error: any) {
-          toast.error(`FHE encryption failed: ${error.message}`);
-          throw error; // 停止执行
-        }
-
-        toast.info(`[${i + 1}/${validRecipients.length}] Submitting allocation...`);
-
-        const allocHash = await writeContractAsync({
-          address: CONTRACTS.AirdropFactory,
-          abi: ABIS.AirdropFactory,
-          functionName: 'setAllocation',
-          args: [airdropId, recipient.address as `0x${string}`, encryptedAmount, proof],
-        });
-
-        await publicClient!.waitForTransactionReceipt({
-          hash: allocHash,
-          confirmations: 1,
-        });
-
-        toast.success(`[${i + 1}/${validRecipients.length}] Allocation set!`);
-      }
-
-      toast.success(`🎉 Airdrop #${airdropId} created with ${validRecipients.length} recipients!`);
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${createHash}`;
+      toast.success(
+        <div>
+          <p>🎉 Airdrop #{airdropId.toString()} created with {validRecipients.length} FHE-encrypted allocations!</p>
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline text-sm"
+          >
+            View on Etherscan →
+          </a>
+        </div>
+      );
 
       // Reset form
       setName('');
@@ -294,7 +305,8 @@ const CreateAirdrop = () => {
                           />
                           <Input
                             type="number"
-                            placeholder="Amount (will be encrypted)"
+                            step="0.000000000000000001"
+                            placeholder="Amount in tokens (e.g., 100 or 0.01)"
                             value={recipient.amount}
                             onChange={(e) => updateRecipient(index, 'amount', e.target.value)}
                             disabled={creating}
@@ -323,7 +335,7 @@ const CreateAirdrop = () => {
                     <li>✅ Addresses are stored publicly</li>
                     <li>✅ Amounts are encrypted with FHE before storing</li>
                     <li>✅ Only recipients can decrypt and view their amounts</li>
-                    <li>✅ All allocations set in single transaction batch</li>
+                    <li>✅ Everything created in a single blockchain transaction</li>
                   </ul>
                 </div>
 
@@ -338,7 +350,7 @@ const CreateAirdrop = () => {
                   {creating ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                      Creating & Setting Allocations...
+                      Encrypting & Creating...
                     </>
                   ) : (
                     <>
@@ -349,7 +361,7 @@ const CreateAirdrop = () => {
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  This will create the airdrop and set all allocations in separate transactions
+                  Amounts are FHE-encrypted locally, then airdrop + allocations created in ONE transaction
                 </p>
               </div>
             )}

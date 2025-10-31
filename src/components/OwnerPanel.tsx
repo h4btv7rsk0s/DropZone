@@ -93,7 +93,20 @@ const OwnerPanel = () => {
       });
 
       if (receipt.status === 'success') {
-        toast.success(`Allocation set for ${recipientAddress}!`);
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+        toast.success(
+          <div>
+            <p>Allocation set for {recipientAddress}!</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         setRecipientAddress('');
         setAllocationAmount('');
       } else {
@@ -160,7 +173,20 @@ const OwnerPanel = () => {
       });
 
       if (receipt.status === 'success') {
-        toast.success(`Batch allocation set for ${validAllocations.length} addresses!`);
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+        toast.success(
+          <div>
+            <p>Batch allocation set for {validAllocations.length} addresses!</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         setBatchAllocations([{ address: '', amount: '' }]);
       } else {
         toast.error('Transaction failed');
@@ -201,7 +227,20 @@ const OwnerPanel = () => {
       });
 
       if (receipt.status === 'success') {
-        toast.success('Contract frozen successfully!');
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+        toast.success(
+          <div>
+            <p>Contract frozen successfully!</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         setTimeout(() => refetchFrozen(), 2000);
       } else {
         toast.error('Transaction failed');

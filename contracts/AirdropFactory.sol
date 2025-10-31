@@ -53,6 +53,46 @@ contract AirdropFactory is SepoliaConfig {
         return airdropId;
     }
 
+    /// @notice Create airdrop with initial allocations in one transaction
+    function createAirdropWithAllocations(
+        string calldata name,
+        string calldata description,
+        address[] calldata users,
+        externalEuint64[] calldata encryptedAmts,
+        bytes[] calldata inputProofs
+    ) external returns (uint256) {
+        require(users.length == encryptedAmts.length, "Length mismatch");
+        require(users.length == inputProofs.length, "Length mismatch");
+
+        uint256 airdropId = airdropCount++;
+
+        airdrops[airdropId] = Airdrop({
+            creator: msg.sender,
+            name: name,
+            description: description,
+            createdAt: block.timestamp,
+            active: true
+        });
+
+        // Set allocations for all users
+        for (uint256 i = 0; i < users.length; i++) {
+            address user = users[i];
+            if (user == address(0)) revert InvalidUser();
+
+            euint64 amt = FHE.fromExternal(encryptedAmts[i], inputProofs[i]);
+            Allocation storage alloc = allocations[airdropId][user];
+
+            alloc.total = FHE.add(alloc.total, amt);
+            FHE.allowThis(alloc.total);
+            FHE.allow(alloc.total, user);
+
+            emit AllocationSet(airdropId, user);
+        }
+
+        emit AirdropCreated(airdropId, msg.sender, name);
+        return airdropId;
+    }
+
     /// @notice Set allocation for a single user (creator only)
     function setAllocation(
         uint256 airdropId,
