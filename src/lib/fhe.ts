@@ -161,22 +161,3 @@ export const encryptAmount = async (
   };
 };
 
-/**
- * Decrypt a euint64 value
- */
-export const decryptAmount = async (
-  handle: string,
-  contractAddress: string,
-  userAddress: string
-): Promise<bigint> => {
-  console.log('[FHE] Decrypting handle:', handle);
-
-  const fhe = await initializeFHE();
-  const checksumAddress = getAddress(contractAddress);
-
-  console.log('[FHE] Requesting decryption...');
-  const decrypted = await fhe.decrypt(checksumAddress, handle, userAddress);
-
-  console.log('[FHE] ✅ Decryption complete');
-  return BigInt(decrypted);
-};

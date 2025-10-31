@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAccount, useReadContract, useWriteContract, usePublicClient } from 'wagmi';
 import { useState, useEffect } from 'react';
-import { Lock, CheckCircle, Loader2, RefreshCw } from 'lucide-react';
+import { Lock, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { CONTRACTS, ABIS } from '@/config/contracts';
-import { initializeFHE, encryptAmount, decryptAmount } from '@/lib/fhe';
+import { initializeFHE, encryptAmount } from '@/lib/fhe';
 
 const AirdropDashboard = () => {
   const { address, isConnected } = useAccount();
@@ -15,35 +15,7 @@ const AirdropDashboard = () => {
 
   const [claimAmount, setClaimAmount] = useState('');
   const [claiming, setClaiming] = useState(false);
-  const [decryptedAllocation, setDecryptedAllocation] = useState<string | null>(null);
-  const [decryptedClaimed, setDecryptedClaimed] = useState<string | null>(null);
-  const [decryptedRemaining, setDecryptedRemaining] = useState<string | null>(null);
-  const [decrypting, setDecrypting] = useState(false);
   const [fheInitialized, setFheInitialized] = useState(false);
-
-  // Read encrypted allocation handle
-  const { data: allocationHandle, refetch: refetchAllocation } = useReadContract({
-    address: CONTRACTS.ConfAirdrop,
-    abi: ABIS.ConfAirdrop,
-    functionName: 'getMyAllocation',
-    account: address,
-  });
-
-  // Read encrypted claimed handle
-  const { data: claimedHandle, refetch: refetchClaimed } = useReadContract({
-    address: CONTRACTS.ConfAirdrop,
-    abi: ABIS.ConfAirdrop,
-    functionName: 'getMyClaimed',
-    account: address,
-  });
-
-  // Read encrypted remaining handle
-  const { data: remainingHandle, refetch: refetchRemaining } = useReadContract({
-    address: CONTRACTS.ConfAirdrop,
-    abi: ABIS.ConfAirdrop,
-    functionName: 'getMyRemaining',
-    account: address,
-  });
 
   // Check if user is owner
   const { data: owner } = useReadContract({
@@ -68,57 +40,6 @@ const AirdropDashboard = () => {
         });
     }
   }, [isConnected, fheInitialized]);
-
-  // Auto-decrypt when handles are available
-  useEffect(() => {
-    if (fheInitialized && address && allocationHandle && claimedHandle && remainingHandle) {
-      handleDecrypt();
-    }
-  }, [fheInitialized, address, allocationHandle, claimedHandle, remainingHandle]);
-
-  const handleDecrypt = async () => {
-    if (!address || !allocationHandle || !claimedHandle || !remainingHandle) {
-      toast.error('No encrypted data available');
-      return;
-    }
-
-    setDecrypting(true);
-    try {
-      console.log('[Decrypt] Starting decryption...');
-
-      // Decrypt allocation
-      const allocBigInt = await decryptAmount(
-        allocationHandle as string,
-        CONTRACTS.ConfAirdrop,
-        address
-      );
-      setDecryptedAllocation(allocBigInt.toString());
-
-      // Decrypt claimed
-      const claimedBigInt = await decryptAmount(
-        claimedHandle as string,
-        CONTRACTS.ConfAirdrop,
-        address
-      );
-      setDecryptedClaimed(claimedBigInt.toString());
-
-      // Decrypt remaining
-      const remainingBigInt = await decryptAmount(
-        remainingHandle as string,
-        CONTRACTS.ConfAirdrop,
-        address
-      );
-      setDecryptedRemaining(remainingBigInt.toString());
-
-      console.log('[Decrypt] Success:', { allocBigInt, claimedBigInt, remainingBigInt });
-      toast.success('Decrypted your allocation successfully!');
-    } catch (error: any) {
-      console.error('[Decrypt] Error:', error);
-      toast.error('Failed to decrypt: ' + error.message);
-    } finally {
-      setDecrypting(false);
-    }
-  };
 
   const handleClaim = async () => {
     if (!isConnected || !address) {
@@ -178,13 +99,6 @@ const AirdropDashboard = () => {
           </div>
         );
         setClaimAmount('');
-
-        // Refetch data
-        setTimeout(() => {
-          refetchAllocation();
-          refetchClaimed();
-          refetchRemaining();
-        }, 2000);
       } else {
         toast.error('Transaction failed');
       }
@@ -266,54 +180,6 @@ const AirdropDashboard = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Decrypted Values */}
-          {fheInitialized && (
-            <Card className="glass-card border-none">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Your Airdrop Information</CardTitle>
-                    <CardDescription>Decrypted values (only you can see)</CardDescription>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDecrypt}
-                    disabled={decrypting}
-                  >
-                    {decrypting ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-secondary/30 rounded-lg">
-                    <span className="text-sm font-medium">Total Allocation:</span>
-                    <span className="text-lg font-bold">
-                      {decryptedAllocation !== null ? decryptedAllocation : '---'} tokens
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-secondary/30 rounded-lg">
-                    <span className="text-sm font-medium">Already Claimed:</span>
-                    <span className="text-lg font-bold">
-                      {decryptedClaimed !== null ? decryptedClaimed : '---'} tokens
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg border border-primary/30">
-                    <span className="text-sm font-medium text-primary">Remaining:</span>
-                    <span className="text-lg font-bold text-primary">
-                      {decryptedRemaining !== null ? decryptedRemaining : '---'} tokens
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Claim Section */}
           <Card className="glass-card border-none">
