@@ -165,30 +165,73 @@ Confidential treasury distributions while maintaining auditability.
 
 ## 🗺️ Roadmap
 
-### Phase 1: Core Features ✅ (Current)
-- [x] Basic airdrop creation with manual allocation
-- [x] FHE-encrypted amount storage
-- [x] Single token claim functionality
-- [x] Wallet integration (MetaMask, OKX, Coinbase)
-- [x] Sepolia testnet deployment
+### Phase 1: Foundation ✅ (Completed - Q4 2024)
+- [x] Basic airdrop creation with manual recipient input
+- [x] FHE-encrypted allocation storage (euint64)
+- [x] Confidential claim functionality with homomorphic validation
+- [x] Multi-wallet integration (MetaMask, OKX, Coinbase)
+- [x] Sepolia testnet deployment with Zama fhEVM
+- [x] Real-time transaction tracking with Etherscan links
 
-### Phase 2: Enhanced Functionality 🚧 (Q2 2024)
-- [ ] **Batch Address Import** - CSV/Excel upload for large-scale distributions
-- [ ] **Multi-Token Support** - ERC20 token airdrops with custom contracts
-- [ ] **Vesting Schedules** - Time-locked releases with cliff periods
-- [ ] **Claim Windows** - Set start/end timestamps for campaigns
+### Phase 2: Enhanced Distribution 🚧 (Q1 2025 - In Progress)
+- [ ] **Batch Address Import** - CSV/JSON upload for 1000+ addresses at once
+- [ ] **Advanced Allocation Management** - Edit, pause, and resume individual allocations
+- [ ] **Multi-Airdrop Dashboard** - Manage multiple campaigns from single interface
+- [ ] **Recipient Allowlisting** - Merkle tree-based eligibility verification
+- [ ] **Gas Optimization** - Reduce claim costs by 40% through batching
 
-### Phase 3: NFT & SBT Integration 🔮 (Q3 2024)
-- [ ] **NFT Airdrops** - Distribute ERC721 tokens with hidden metadata
-- [ ] **Soulbound Token (SBT)** - Non-transferable achievement badges
-- [ ] **Conditional Claims** - Proof-of-ownership requirements
-- [ ] **Merkle Tree Optimization** - Gas-efficient large-scale drops
+### Phase 3: Token Ecosystem 🔮 (Q2-Q3 2025)
+- [ ] **ERC20 Token Support** - Airdrop any standard token with FHE amounts
+- [ ] **Native Token Integration** - Wrap ETH for confidential distributions
+- [ ] **Vesting Schedules** - Linear/cliff vesting with encrypted unlock amounts
+- [ ] **Claim Windows** - Time-bound campaigns with start/end timestamps
+- [ ] **Auto-Refund Mechanism** - Return unclaimed tokens after deadline
 
-### Phase 4: Advanced Privacy 🌌 (Q4 2024)
-- [ ] **Anonymous Claiming** - Relay network for transaction privacy
-- [ ] **Cross-Chain Support** - Polygon, Arbitrum, Optimism
-- [ ] **Governance Module** - Community-controlled treasury
-- [ ] **Analytics Dashboard** - Encrypted metrics for campaign owners
+### Phase 4: NFT & SBT 🎨 (Q4 2025)
+- [ ] **NFT Airdrops (ERC721)** - Distribute NFTs with hidden rarity/metadata
+- [ ] **Soulbound Tokens (ERC5192)** - Non-transferable achievement badges
+- [ ] **Conditional Claims** - Require proof of NFT ownership or token balance
+- [ ] **Encrypted Metadata** - Hide NFT attributes until reveal date
+- [ ] **Batch NFT Minting** - Gas-efficient mass distribution
+
+### Phase 5: Enterprise Features 🏢 (Q1 2026)
+- [ ] **Whitelist Management** - API for dynamic eligibility updates
+- [ ] **Analytics Dashboard** - Encrypted metrics (claim rate, distribution stats)
+- [ ] **Team Collaboration** - Multi-sig controls for campaign management
+- [ ] **Custom Branding** - White-label interface for projects
+- [ ] **Email Notifications** - Alert recipients about new allocations
+
+### Phase 6: Advanced Privacy & Scale 🌌 (Q2 2026+)
+- [ ] **Anonymous Claiming** - Privacy pools for transaction unlinkability
+- [ ] **Cross-Chain Support** - Deploy on Polygon zkEVM, Arbitrum, Base
+- [ ] **Mainnet Launch** - Ethereum mainnet with audited contracts
+- [ ] **L2 Integration** - Optimistic rollups for lower gas costs
+- [ ] **DAO Governance** - Community-controlled treasury and upgrades
+- [ ] **Mobile App** - iOS/Android native apps with embedded wallets
+
+---
+
+### 🎯 2025 Priority Goals
+
+**Q1 2025** (Current Quarter)
+1. Implement CSV batch import (target: 5,000 addresses per upload)
+2. Add allocation editing capabilities
+3. Launch multi-airdrop dashboard
+
+**Q2 2025**
+1. ERC20 token integration with 10+ popular tokens
+2. Vesting schedule implementation
+3. Security audit preparation
+
+**Q3 2025**
+1. Complete security audit with reputable firm
+2. NFT airdrop beta launch
+3. Performance optimization (target: <50k gas per claim)
+
+**Q4 2025**
+1. Soulbound token support
+2. Mainnet preparation
+3. Marketing campaign and partnerships
 
 ---
 
