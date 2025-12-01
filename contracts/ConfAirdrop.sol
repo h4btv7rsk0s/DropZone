@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 import { FHE, euint64, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
-import { SepoliaConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title Mystery Airdrop — Confidential Allowlist & Claim with FHEVM
-contract ConfAirdrop is SepoliaConfig {
+contract ConfAirdrop is ZamaEthereumConfig {
     address public owner;
     bool public frozen;
 
