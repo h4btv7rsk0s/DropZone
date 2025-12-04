@@ -157,8 +157,22 @@ const CreateAirdrop = () => {
         confirmations: 1,
       });
 
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${createHash}`;
+
       if (createReceipt.status !== 'success') {
-        toast.error('Failed to create airdrop');
+        toast.error(
+          <div>
+            <p>Transaction failed on-chain</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         return;
       }
 
@@ -168,13 +182,24 @@ const CreateAirdrop = () => {
       );
 
       if (!airdropCreatedEvent) {
-        toast.error('Could not get airdrop ID');
+        toast.error(
+          <div>
+            <p>Could not get airdrop ID from transaction</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
         return;
       }
 
       const airdropId = BigInt(airdropCreatedEvent.topics[1] || '0');
 
-      const explorerUrl = `https://sepolia.etherscan.io/tx/${createHash}`;
       toast.success(
         <div>
           <p>🎉 Airdrop #{airdropId.toString()} created with {validRecipients.length} FHE-encrypted allocations!</p>

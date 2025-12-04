@@ -92,8 +92,9 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
         confirmations: 1,
       });
 
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+
       if (receipt.status === 'success') {
-        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
         toast.success(
           <div>
             <p>Allocation set for {recipientAddress}!</p>
@@ -110,7 +111,19 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
         setRecipientAddress('');
         setAllocationAmount('');
       } else {
-        toast.error('Transaction failed');
+        toast.error(
+          <div>
+            <p>Transaction failed on-chain</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
       }
     } catch (error: any) {
       console.error('[SetAllocation] Error:', error);
@@ -180,8 +193,9 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
         confirmations: 1,
       });
 
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+
       if (receipt.status === 'success') {
-        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
         toast.success(
           <div>
             <p>Batch allocation set for {validAllocations.length} addresses!</p>
@@ -197,7 +211,19 @@ const AirdropManager = ({ airdropId, onBack }: AirdropManagerProps) => {
         );
         setBatchAllocations([{ address: '', amount: '' }]);
       } else {
-        toast.error('Transaction failed');
+        toast.error(
+          <div>
+            <p>Transaction failed on-chain</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
       }
     } catch (error: any) {
       console.error('[BatchSetAllocation] Error:', error);
