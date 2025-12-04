@@ -66,8 +66,9 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
         confirmations: 1,
       });
 
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
+
       if (receipt.status === 'success') {
-        const explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
         toast.success(
           <div>
             <p>Claim successful!</p>
@@ -82,6 +83,20 @@ const AirdropClaim = ({ airdropId, onBack }: AirdropClaimProps) => {
           </div>
         );
         setClaimAmount('');
+      } else {
+        toast.error(
+          <div>
+            <p>Transaction failed on-chain</p>
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline text-sm"
+            >
+              View on Etherscan →
+            </a>
+          </div>
+        );
       }
     } catch (error: any) {
       console.error('[Claim] Error:', error);
