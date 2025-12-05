@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+    <link rel="preconnect" href="https://cdn.zama.org" />
     <title>ConfAirdrop - Privacy-First FHE Airdrop Distribution</title>
     <meta name="description" content="Privacy-preserving airdrop distribution powered by Fully Homomorphic Encryption. Your allocation and claims stay encrypted on-chain." />
     <meta name="author" content="ConfAirdrop" />
@@ -23,6 +26,11 @@
 
   <body>
     <div id="root"></div>
+    <script
+      src="https://cdn.zama.org/relayer-sdk-js/0.3.0-5/relayer-sdk-js.umd.cjs"
+      defer
+      crossorigin="anonymous"
+    ></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
