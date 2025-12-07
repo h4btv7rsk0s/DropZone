@@ -1,8 +1,10 @@
 # ConfAirdrop - Privacy-Preserving Airdrop Platform
 
-![ConfAirdrop Banner](https://img.shields.io/badge/FHE-Powered-blue) ![Zama](https://img.shields.io/badge/Zama-fhEVM-green) ![Sepolia](https://img.shields.io/badge/Network-Sepolia-orange) ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
+![ConfAirdrop Banner](https://img.shields.io/badge/FHE-Powered-blue) ![Zama](https://img.shields.io/badge/Zama-fhEVM_0.9.1-green) ![Sepolia](https://img.shields.io/badge/Network-Sepolia-orange) ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
 
 **Live Demo**: [https://confairdrop.vercel.app](https://confairdrop.vercel.app)
+
+**Contract Address**: [`0x70D03EB90AD744dA9e2E9Ce1A4636fd912B8Bfd5`](https://sepolia.etherscan.io/address/0x70D03EB90AD744dA9e2E9Ce1A4636fd912B8Bfd5)
 
 ## 🎬 Demo Video
 
@@ -18,7 +20,7 @@ The demo showcases:
 
 ## 📖 What is ConfAirdrop?
 
-**ConfAirdrop** (Confidential Airdrop) is a revolutionary token distribution platform that leverages **Fully Homomorphic Encryption (FHE)** to protect sensitive allocation data while maintaining complete transparency and verifiability on-chain. Built with **Zama's fhEVM v0.5** technology, ConfAirdrop ensures that token distribution amounts remain encrypted throughout the entire lifecycle—from creation to claiming.
+**ConfAirdrop** (Confidential Airdrop) is a revolutionary token distribution platform that leverages **Fully Homomorphic Encryption (FHE)** to protect sensitive allocation data while maintaining complete transparency and verifiability on-chain. Built with **Zama's fhEVM v0.9.1** technology, ConfAirdrop ensures that token distribution amounts remain encrypted throughout the entire lifecycle—from creation to claiming.
 
 ### Why ConfAirdrop?
 
@@ -97,7 +99,7 @@ Traditional airdrops expose all allocation amounts publicly on-chain, leading to
 
 ```
 ┌─────────────────┐      ┌──────────────────┐      ┌───────────────────┐
-│   Frontend      │─────▶│  Zama SDK v0.2   │─────▶│ ConfAirdrop.sol   │
+│   Frontend      │─────▶│ Zama SDK v0.3.0  │─────▶│ AirdropFactory.sol│
 │  (React + Vite) │      │  (FHE Operations)│      │  (Sepolia)        │
 │  + Wagmi/Viem   │◀─────│                  │◀─────│                   │
 └─────────────────┘      └──────────────────┘      └───────────────────┘
@@ -111,20 +113,20 @@ Traditional airdrops expose all allocation amounts publicly on-chain, leading to
 
 ### Core Components
 
-1. **Frontend** - React + TypeScript + Vite
+1. **Frontend** - React 18 + TypeScript + Vite
    - User interface for airdrop management
-   - Client-side FHE encryption via Zama SDK
-   - Web3 wallet integration with Wagmi v2
+   - Client-side FHE encryption via Zama Relayer SDK (CDN)
+   - Web3 wallet integration with Wagmi v2 + RainbowKit
 
-2. **Zama FHE SDK** - v0.2.0
+2. **Zama Relayer SDK** - v0.3.0-5
    - Handles all encryption operations
    - Generates cryptographic proofs
-   - Manages public key infrastructure
+   - Loaded via CDN for optimal performance
 
-3. **Smart Contract** - ConfAirdrop.sol
-   - Stores encrypted allocations on-chain
-   - Validates encrypted claims
-   - Executes homomorphic operations
+3. **Smart Contract** - AirdropFactory.sol
+   - Multi-airdrop management with encrypted allocations
+   - Validates encrypted claims using TFHE operations
+   - Built with @fhevm/solidity v0.9.1
 
 4. **KMS Gateway** - Key Management Service
    - Manages distributed key generation
@@ -173,45 +175,55 @@ User Input: Claim Amount (e.g., 500 tokens)
 ### Smart Contract Logic
 
 ```solidity
-// Simplified ConfAirdrop.sol logic
+// Simplified AirdropFactory.sol logic (fhEVM v0.9.1)
 pragma solidity ^0.8.24;
 
-import "fhevm/lib/TFHE.sol";
+import { TFHE, euint64, externalEuint64, ebool } from "@fhevm/solidity/lib/TFHE.sol";
+import { FHEVMConfig, ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
+import { ConfidentialERC20 } from "@fhevm/solidity/contracts/token/ConfidentialERC20/ConfidentialERC20.sol";
 
-contract ConfAirdrop {
+contract AirdropFactory is ConfidentialERC20 {
     struct Allocation {
         euint64 total;     // Encrypted total allocation
         euint64 claimed;   // Encrypted claimed amount
     }
 
-    mapping(uint256 => mapping(address => Allocation)) public allocations;
+    mapping(uint256 => mapping(address => Allocation)) internal allocations;
+
+    constructor() ConfidentialERC20("ConfAirdrop", "CAIRDROP") {
+        // Initialize with Zama Ethereum config for Sepolia
+    }
 
     // Create airdrop with encrypted amounts
-    function createAirdrop(
-        address[] calldata recipients,
-        bytes32[] calldata encryptedAmounts,
-        bytes[] calldata proofs
-    ) external onlyOwner {
-        uint256 airdropId = nextAirdropId++;
+    function createAirdropWithAllocations(
+        string calldata name,
+        string calldata description,
+        address[] calldata users,
+        externalEuint64[] calldata encryptedAmts,
+        bytes[] calldata inputProofs
+    ) external returns (uint256) {
+        uint256 airdropId = airdropCount++;
 
-        for (uint256 i = 0; i < recipients.length; i++) {
-            euint64 amount = TFHE.asEuint64(encryptedAmounts[i], proofs[i]);
-            allocations[airdropId][recipients[i]] = Allocation({
+        for (uint256 i = 0; i < users.length; i++) {
+            euint64 amount = TFHE.fromExternal(encryptedAmts[i], inputProofs[i]);
+            allocations[airdropId][users[i]] = Allocation({
                 total: amount,
                 claimed: TFHE.asEuint64(0)
             });
+            TFHE.allowThis(allocations[airdropId][users[i]].total);
         }
 
-        emit AirdropCreated(airdropId, recipients.length);
+        emit AirdropCreated(airdropId, msg.sender, name);
+        return airdropId;
     }
 
     // Claim tokens with encrypted amount
     function claim(
         uint256 airdropId,
-        bytes32 encryptedAmt,
-        bytes calldata proof
+        externalEuint64 encryptedAmt,
+        bytes calldata inputProof
     ) external {
-        euint64 amt = TFHE.asEuint64(encryptedAmt, proof);
+        euint64 amt = TFHE.fromExternal(encryptedAmt, inputProof);
         Allocation storage alloc = allocations[airdropId][msg.sender];
 
         // Homomorphic operations - no decryption!
@@ -220,7 +232,8 @@ contract ConfAirdrop {
         TFHE.req(canClaim); // Revert if false
 
         alloc.claimed = TFHE.add(alloc.claimed, amt);
-        emit Claimed(airdropId, msg.sender, encryptedAmt);
+        TFHE.allowThis(alloc.claimed);
+        emit Claimed(airdropId, msg.sender);
     }
 }
 ```
@@ -230,27 +243,28 @@ contract ConfAirdrop {
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **React 18** - Modern UI framework
-- **TypeScript** - Type-safe development
-- **Vite** - Lightning-fast build tool
-- **Tailwind CSS** - Utility-first styling
+- **React 18.3** - Modern UI framework
+- **TypeScript 5.8** - Type-safe development
+- **Vite 5.4** - Lightning-fast build tool
+- **Tailwind CSS 3.4** - Utility-first styling
 - **shadcn/ui** - High-quality component library
 
 ### Web3 Integration
-- **Wagmi v2** - React Hooks for Ethereum
-- **Viem** - TypeScript Ethereum library
-- **RainbowKit** - Wallet connection UI
-- **Zama Relayer SDK v0.2.0** - FHE operations
+- **Wagmi v2.19** - React Hooks for Ethereum
+- **Viem v2.38** - TypeScript Ethereum library
+- **RainbowKit v2.2** - Wallet connection UI
+- **Zama Relayer SDK v0.3.0-5** - FHE operations (CDN)
 
 ### Smart Contracts
 - **Solidity ^0.8.24** - Smart contract language
-- **Zama fhEVM v0.5** - FHE-enabled EVM
-- **Hardhat** - Development environment
-- **Ethers.js v6** - Contract interactions
+- **@fhevm/solidity v0.9.1** - FHE-enabled smart contracts
+- **@fhevm/hardhat-plugin v0.3.0-1** - Hardhat integration
+- **Hardhat v2.26** - Development environment
+- **Ethers.js v6.15** - Contract interactions
 
 ### Deployment
 - **Vercel** - Frontend hosting
-- **Ethereum Sepolia** - Test network
+- **Ethereum Sepolia** - Test network (Zama fhEVM)
 - **GitHub** - Version control
 
 ---
@@ -291,7 +305,7 @@ Create a `.env` file in the root directory:
 SEPOLIA_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
 
 # Contract address (deployed on Sepolia)
-VITE_CONTRACT_ADDRESS=0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+# AirdropFactory: 0x70D03EB90AD744dA9e2E9Ce1A4636fd912B8Bfd5
 
 # Private key for deployment (keep secret!)
 PRIVATE_KEY=your_private_key_here
@@ -322,12 +336,16 @@ npm run lint
 ### Deploy Smart Contract
 
 ```bash
-# Compile contracts
+# Compile contracts (with viaIR enabled for fhEVM 0.9.1)
 npx hardhat compile
 
 # Deploy to Sepolia
-SEPOLIA_RPC_URL="your_rpc_url" npx hardhat run scripts/deploy.js --network sepolia
+SEPOLIA_RPC_URL="https://ethereum-sepolia-rpc.publicnode.com" \
+PRIVATE_KEY="your_private_key" \
+npx hardhat run scripts/deploy.js --network sepolia
 ```
+
+> **Note**: The project uses `@fhevm/hardhat-plugin` v0.3.0-1 which requires `viaIR: true` in the Solidity compiler settings.
 
 ---
 
@@ -563,8 +581,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - **Live Demo**: [https://confairdrop.vercel.app](https://confairdrop.vercel.app)
+- **Contract on Etherscan**: [0x70D03EB90AD744dA9e2E9Ce1A4636fd912B8Bfd5](https://sepolia.etherscan.io/address/0x70D03EB90AD744dA9e2E9Ce1A4636fd912B8Bfd5)
 - **GitHub**: [https://github.com/h4btv7rsk0s/DropZone](https://github.com/h4btv7rsk0s/DropZone)
-- **Zama Documentation**: [https://docs.zama.ai/fhevm](https://docs.zama.ai/fhevm)
+- **Zama Documentation**: [https://docs.zama.org/protocol](https://docs.zama.org/protocol)
+- **fhEVM Migration Guide**: [https://docs.zama.org/protocol/solidity-guides/development-guide/migration](https://docs.zama.org/protocol/solidity-guides/development-guide/migration)
 - **fhEVM GitHub**: [https://github.com/zama-ai/fhevm](https://github.com/zama-ai/fhevm)
 
 ---
@@ -574,7 +594,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Issues**: [GitHub Issues](https://github.com/h4btv7rsk0s/DropZone/issues)
 - **Twitter**: [@ZamaFHE](https://twitter.com/ZamaFHE)
 - **Discord**: [Zama Community](https://discord.gg/zama)
-- **Documentation**: [Zama Docs](https://docs.zama.ai/)
+- **Documentation**: [Zama Docs](https://docs.zama.org/)
 
 ---
 
